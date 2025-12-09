@@ -16,7 +16,7 @@ log:
       level: 10 # DEBUG
   loggers:
     myaiproxy:
-      handlers: [ file, console ]
+      handlers: [ console ]
       level: 10 # DEBUG
       propagate: true
 
@@ -25,6 +25,7 @@ cors:
 
 profiles:
   - prefix: hello
+    base_url: ...
     plugins:
       - name: src.plugins.builtin.extra_body
         config:
