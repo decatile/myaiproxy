@@ -1,0 +1,11 @@
+cors:
+  allowed_origins: [ ]
+profiles:
+  - prefix: hello
+    plugins:
+      - name: src.plugins.builtin.extra_body
+        config:
+          overwrite: true
+          extra:
+            provider:
+              zdr: true
