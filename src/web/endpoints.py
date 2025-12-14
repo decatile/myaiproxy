@@ -24,7 +24,7 @@ def define_for_profile(app: FastAPI, profile: ProfileSettings) -> None:
         r = await client.get(f'{profile.base_url}/v1/models')
 
         if r.status_code != 200:
-            raise HTTPException(r.status_code, {'error': r.text}, dict(r.headers))
+            raise HTTPException(r.status_code, {'error': r.text})
 
         return r.json()
 
@@ -33,7 +33,13 @@ def define_for_profile(app: FastAPI, profile: ProfileSettings) -> None:
             request: Request,
             client: AsyncClient = Depends(get_http_client)
     ) -> StreamingResponse:
-        ctx = pipeline.process(PluginContext(headers=dict(request.headers), body=await request.json()))
+        ctx = PluginContext(headers=dict(request.headers), body=await request.json())
+
+        try:
+            await pipeline.process(ctx)
+        except Exception as e:
+            log.exception('Failed to process pipeline')
+            raise HTTPException(500, {'error': str(e)})
 
         r = await client.post(
             f'{profile.base_url}/v1/chat/completions',
@@ -42,7 +48,7 @@ def define_for_profile(app: FastAPI, profile: ProfileSettings) -> None:
         )
 
         if r.status_code != 200:
-            raise HTTPException(r.status_code, {'error': r.text}, dict(r.headers))
+            raise HTTPException(r.status_code, {'error': r.text})
 
         async def create_stream() -> AsyncGenerator[bytes]:
             async for chunk in r.aiter_bytes():
