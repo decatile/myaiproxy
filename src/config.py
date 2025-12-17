@@ -14,7 +14,7 @@ class PluginSettings(BaseSettings):
 
 class ProfileSettings(BaseSettings):
     prefix: str
-    base_url: str
+    api_url: str
     plugins: list[PluginSettings]
 
 

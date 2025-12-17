@@ -6,7 +6,7 @@ from httpx import AsyncClient
 
 from src.config import settings
 from src.utils.logger import get_logger
-from src.web.endpoints import define_for_profile
+from src.web.endpoints import router_for_profile
 
 from contextlib import asynccontextmanager
 
@@ -15,10 +15,6 @@ log = get_logger(__name__)
 
 @asynccontextmanager
 async def stateful_lifespan(_app: FastAPI) -> AsyncGenerator[dict[str, Any]]:
-    for profile in settings.profiles:
-        log.info(f'Setting up profile with prefix "{profile.prefix}"')
-        define_for_profile(app, profile)
-
     async with AsyncClient() as http_client:
         yield {'http_client': http_client}
 
@@ -34,6 +30,9 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"]
     )
+
+    for profile in settings.profiles:
+        app.include_router(router_for_profile(profile))
 
     return app
 

@@ -14,7 +14,8 @@ class PluginContext(BaseModel):
 
 class AbstractPlugin(ABC):
     @abstractmethod
-    async def process(self, ctx: PluginContext) -> None: ...
+    async def process(self, ctx: PluginContext) -> None:
+        ...
 
 
 class BasePlugin[T: BaseSettings](AbstractPlugin, ABC):

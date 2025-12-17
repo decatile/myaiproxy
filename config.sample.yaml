@@ -25,7 +25,7 @@ cors:
 
 profiles:
   - prefix: hello
-    base_url: ...
+    api_url: ...
     plugins:
       - name: src.plugins.builtin.static
         config:
